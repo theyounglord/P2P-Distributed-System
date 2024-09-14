@@ -1,0 +1,7 @@
+{
+    "db_host": "staging.dbserver.com",
+    "db_port": "5432",
+    "db_name": "mydb_staging",
+    "db_user": "postgres",
+    "db_password": "testbucket8600"
+}
