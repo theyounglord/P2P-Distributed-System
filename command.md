@@ -2,7 +2,7 @@ cd build/macos
 cmake ../..
 make
 
-./P2PFileSharing --env development
+./P2PFiledevelopmentSharing --env 
 
 
 

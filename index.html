@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFS Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: #f4f7fc;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #1f2833;
+            padding-top: 20px;
+            color: #c5c6c7;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            color: #66fcf1;
+            margin-bottom: 30px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar ul li:hover {
+            background-color: #45a29e;
+        }
+
+        .sidebar ul li a {
+            color: #c5c6c7;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #f4f7fc;
+            overflow-y: auto;
+        }
+
+        .top-bar {
+            background-color: #66fcf1;
+            color: #1f2833;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: #1f2833;
+            color: #c5c6c7;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .upload-btn, .details-btn {
+            background-color: #66fcf1;
+            color: #1f2833;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .upload-btn:hover, .details-btn:hover {
+            background-color: #45a29e;
+        }
+
+        .progress-bar {
+            background-color: #45a29e;
+            width: 0;
+            height: 10px;
+            border-radius: 5px;
+        }
+
+        .progress {
+            width: 100%;
+            background-color: #c5c6c7;
+            height: 10px;
+            margin-top: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .step-section {
+            margin-top: 20px;
+        }
+
+        .success-message {
+            color: #66fcf1;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar" id="sidebar">
+        <h2>Dashboard</h2>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">File Upload</a></li>
+            <li><a href="#">Peer Status</a></li>
+            <li><a href="#">Network Health</a></li>
+            <li><a href="#">Settings</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <h2>DFS Dashboard</h2>
+        </div>
+
+        <div class="dashboard-content">
+            <!-- Step 1: Register File -->
+            <div class="card step-section">
+                <h3>Step 1: Register File</h3>
+                <label for="file-name">File Name:</label>
+                <input type="text" id="file-name" placeholder="Enter file name">
+                <br><br>
+                <label for="file-path">File Path:</label>
+                <input type="text" id="file-path" placeholder="Enter file path">
+                <br><br>
+                <button class="upload-btn" onclick="registerFile()">Register File</button>
+                <div class="progress hidden" id="register-progress">
+                    <div class="progress-bar" id="register-progress-bar"></div>
+                </div>
+                <div id="register-status" class="success-message"></div>
+            </div>
+
+            <!-- Step 2: Seeding Process -->
+            <div class="card step-section hidden" id="step-2">
+                <h3>Step 2: Tracker Creation & Seeding</h3>
+                <button class="upload-btn" onclick="startSeeding()">Start Seeding</button>
+                <div class="progress hidden" id="seeding-progress">
+                    <div class="progress-bar" id="seeding-progress-bar"></div>
+                </div>
+                <div id="seeding-status" class="success-message"></div>
+            </div>
+
+            <!-- Step 3: Encryption Process (optional) -->
+            <div class="card step-section hidden" id="step-3">
+                <h3>Step 3: Encryption (Optional)</h3>
+                <button class="details-btn" onclick="startEncryption()">Start Encryption</button>
+                <div class="progress hidden" id="encryption-progress">
+                    <div class="progress-bar" id="encryption-progress-bar"></div>
+                </div>
+                <div id="encryption-status" class="success-message"></div>
+            </div>
+
+            <!-- Step 4: Peer Discovery -->
+            <div class="card step-section hidden" id="step-4">
+                <h3>Step 4: Peer Discovery</h3>
+                <p>Select Network:</p>
+                <button class="details-btn" onclick="chooseNetwork('global')">Global Network</button>
+                <button class="details-btn" onclick="chooseNetwork('local')">Local Network</button>
+                <div id="peer-list" class="hidden"></div>
+            </div>
+
+            <!-- Step 5: File Fragmentation -->
+            <div class="card step-section hidden" id="step-5">
+                <h3>Step 5: File Fragmentation</h3>
+                <button class="details-btn" onclick="startFragmentation()">Start Fragmentation</button>
+                <div class="progress hidden" id="fragmentation-progress">
+                    <div class="progress-bar" id="fragmentation-progress-bar"></div>
+                </div>
+                <div id="fragmentation-status" class="success-message"></div>
+            </div>
+
+            <!-- Step 6: Upload & Hash Verification -->
+            <div class="card step-section hidden" id="step-6">
+                <h3>Step 6: Upload & Verify</h3>
+                <button class="details-btn" onclick="startUpload()">Initiate Upload</button>
+                <div class="progress hidden" id="upload-progress">
+                    <div class="progress-bar" id="upload-progress-bar"></div>
+                </div>
+                <div id="upload-status" class="success-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function registerFile() {
+            document.getElementById('register-progress').classList.remove('hidden');
+            let progressBar = document.getElementById('register-progress-bar');
+            progressBar.style.width = '0';
+            let progress = 0;
+            let interval = setInterval(() => {
+                progress += 20;
+                progressBar.style.width = progress + '%';
+                if (progress === 100) {
+                    clearInterval(interval);
+                    document.getElementById('register-status').innerText = 'File Registered and Tracker Created!';
+                    document.getElementById('step-2').classList.remove('hidden'); // Show next step
+                }
+            }, 500);
+        }
+
+        function startSeeding() {
+            document.getElementById('seeding-progress').classList.remove('hidden');
+            let progressBar = document.getElementById('seeding-progress-bar');
+            progressBar.style.width = '0';
+            let progress = 0;
+            let interval = setInterval(() => {
+                progress += 25;
+                progressBar.style.width = progress + '%';
+                if (progress === 100) {
+                    clearInterval(interval);
+                    document.getElementById('seeding-status').innerText = 'Seeding Process Complete!';
+                    document.getElementById('step-3').classList.remove('hidden'); // Show next step
+                }
+            }, 600);
+        }
+
+        function startEncryption() {
+            document.getElementById('encryption-progress').classList.remove('hidden');
+            let progressBar = document.getElementById('encryption-progress-bar');
+            progressBar.style.width = '0';
+            let progress = 0;
+            let interval = setInterval(() => {
+                progress += 25;
+                progressBar.style.width = progress + '%';
+                if (progress === 100) {
+                    clearInterval(interval);
+                    document.getElementById('encryption-status').innerText = 'Encryption Process Complete!';
+                    document.getElementById('step-4').classList.remove('hidden'); // Show next step
+                }
+            }, 700);
+        }
+
+        function chooseNetwork(network) {
+            document.getElementById('peer-list').classList.remove('hidden');
+            // Simulate finding peers based on network choice
+            let peers = network === 'global' ? ['Peer 1 (Global)', 'Peer 2 (Global)'] : ['Peer 1 (Local)', 'Peer 2 (Local)'];
+            let peerList = document.getElementById('peer-list');
+            peerList.innerHTML = ''; // Clear previous entries
+            peers.forEach(peer => {
+                let peerItem = document.createElement('div');
+                peerItem.innerText = peer;
+                peerList.appendChild(peerItem);
+            });
+            document.getElementById('step-5').classList.remove('hidden'); // Show next step
+        }
+
+        function startFragmentation() {
+            document.getElementById('fragmentation-progress').classList.remove('hidden');
+            let progressBar = document.getElementById('fragmentation-progress-bar');
+            progressBar.style.width = '0';
+            let progress = 0;
+            let interval = setInterval(() => {
+                progress += 20;
+                progressBar.style.width = progress + '%';
+                if (progress === 100) {
+                    clearInterval(interval);
+                    document.getElementById('fragmentation-status').innerText = 'Fragmentation Complete!';
+                    document.getElementById('step-6').classList.remove('hidden'); // Show next step
+                }
+            }, 700);
+        }
+
+        function startUpload() {
+            document.getElementById('upload-progress').classList.remove('hidden');
+            let progressBar = document.getElementById('upload-progress-bar');
+            progressBar.style.width = '0';
+            let progress = 0;
+            let interval = setInterval(() => {
+                progress += 15;
+                progressBar.style.width = progress + '%';
+                if (progress === 100) {
+                    clearInterval(interval);
+                    document.getElementById('upload-status').innerText = 'Upload Complete! Hash Verified!';
+                }
+            }, 400);
+        }
+    </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-# P2P-Distributed-
+# P2P-Distributed-Systems
 
 
 It looks like your program successfully connects to the PostgreSQL database but exits right after the connection is established. This happens because, once the program executes all the instructions in `main()`, it reaches the end and exits automatically.
